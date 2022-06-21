@@ -6,15 +6,15 @@
 #include <random>
 
 class RandomPoints {
-        static std::pair<unsigned long, unsigned long>
-            getPoint(std::mt19937 &gen, std::uniform_int_distribution<unsigned long> &w_dist,
-                     std::uniform_int_distribution<unsigned long> &h_dist);
+        static std::pair<unsigned int, unsigned int>
+            getPoint(std::mt19937 &gen, std::uniform_int_distribution<unsigned int> &w_dist,
+                     std::uniform_int_distribution<unsigned int> &h_dist);
 
     public:
-        static std::vector<std::pair<unsigned long, unsigned long>>
-            generate(unsigned long width, unsigned long height, unsigned long num);
-        static std::vector<std::pair<unsigned long, unsigned long>>
-            generate(unsigned long width, unsigned long height, unsigned long num, unsigned long seed);
+        static std::vector<std::pair<unsigned int, unsigned int>>
+            generate(unsigned int width, unsigned int height, unsigned int num);
+        static std::vector<std::pair<unsigned int, unsigned int>>
+            generate(unsigned int width, unsigned int height, unsigned int num, unsigned int seed);
 };
 
 #endif /* RANDOM_POINTS_H */

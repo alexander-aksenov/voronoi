@@ -1,21 +1,21 @@
 #include <random_points.h>
 
-std::pair<unsigned long, unsigned long>
-RandomPoints::getPoint(std::mt19937 &gen, std::uniform_int_distribution<unsigned long> &w_dist,
-                       std::uniform_int_distribution<unsigned long> &h_dist)
+std::pair<unsigned int, unsigned int>
+RandomPoints::getPoint(std::mt19937 &gen, std::uniform_int_distribution<unsigned int> &w_dist,
+                       std::uniform_int_distribution<unsigned int> &h_dist)
 {
     return std::make_pair(w_dist(gen), h_dist(gen));
 
 }
 
-std::vector<std::pair<unsigned long, unsigned long>>
-RandomPoints::generate(unsigned long width, unsigned long height, unsigned long num, unsigned long seed)
+std::vector<std::pair<unsigned int, unsigned int>>
+RandomPoints::generate(unsigned int width, unsigned int height, unsigned int num, unsigned int seed)
 {
-    std::vector<std::pair<unsigned long, unsigned long>> res(num);
+    std::vector<std::pair<unsigned int, unsigned int>> res(num);
 
     std::mt19937 gen(seed);
-    std::uniform_int_distribution<unsigned long> w_distrib(0, width);
-    std::uniform_int_distribution<unsigned long> h_distrib(0, height);
+    std::uniform_int_distribution<unsigned int> w_distrib(0, width);
+    std::uniform_int_distribution<unsigned int> h_distrib(0, height);
 
     for (auto it = res.begin(); it != res.end(); it++)
         *it = getPoint(gen, w_distrib, h_distrib);
@@ -23,8 +23,8 @@ RandomPoints::generate(unsigned long width, unsigned long height, unsigned long 
     return res;
 }
 
-std::vector<std::pair<unsigned long, unsigned long>>
-RandomPoints::generate(unsigned long width, unsigned long height, unsigned long num)
+std::vector<std::pair<unsigned int, unsigned int>>
+RandomPoints::generate(unsigned int width, unsigned int height, unsigned int num)
 {
     std::random_device rd;
 

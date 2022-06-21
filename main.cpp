@@ -4,7 +4,7 @@
 #include <random_points.h>
 
 static void
-printPoints(std::vector<std::pair<unsigned long, unsigned long>>& points)
+printPoints(std::vector<std::pair<unsigned int, unsigned int>>& points)
 {
     for (auto point : points)
         std::cout << point.first << ", " << point.second << std::endl;
@@ -19,16 +19,16 @@ main(int argc, char** argv)
     }
 
     char *end;
-    unsigned long width = strtoul(argv[1], &end, 10);
-    unsigned long height = strtoul(argv[2], &end, 10);
-    unsigned long num = strtoul(argv[3], &end, 10);
+    unsigned int width = strtoul(argv[1], &end, 10);
+    unsigned int height = strtoul(argv[2], &end, 10);
+    unsigned int num = strtoul(argv[3], &end, 10);
 
     std::cout << "Num values are " << width << " " << height << " " << num << std::endl;
 
-    std::vector<std::pair<unsigned long, unsigned long>> res;
+    std::vector<std::pair<unsigned int, unsigned int>> res;
 
     if (argc == 5) {
-        unsigned long seed = strtoul(argv[4], &end, 10);
+        unsigned int seed = strtoul(argv[4], &end, 10);
         std::cout << "With seed " << seed << std::endl;
 
         res = RandomPoints::generate(width, height, num, seed);
