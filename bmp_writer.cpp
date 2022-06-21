@@ -83,10 +83,12 @@ BmpWriter::writeImage(std::ofstream &out)
 
     for (unsigned int y = 0; y < height; y++) {
         for (unsigned int x = 0; x < width; x++) {
-            if (binaryImg[x][y])
-                out.write((const char *) &full, BYTES_PER_PIXEL);
-            else
-                out.write((const char *) &empty, BYTES_PER_PIXEL);
+            const unsigned char dot[] = {
+                std::get<0>(img[x][y]),
+                std::get<1>(img[x][y]),
+                std::get<2>(img[x][y]),
+            };
+            out.write((const char *) &dot, BYTES_PER_PIXEL);
         }
         out.write((const char *) &padding, getPaddingSize());
     }
@@ -96,7 +98,7 @@ void
 BmpWriter::addDots(const std::vector<std::pair<unsigned int, unsigned int>> &dots)
 {
     for (auto dot : dots)
-        binaryImg[dot.first][dot.second] = true;
+        img[dot.first][dot.second] = std::make_tuple(dot.first, dot.second, 0);
 }
 
 void

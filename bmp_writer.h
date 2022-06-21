@@ -5,13 +5,16 @@
 #include <vector>
 #include <utility>
 #include <fstream>
+#include <tuple>
+
+using BmpDot = std::tuple<unsigned char, unsigned char, unsigned char>;
 
 class BmpWriter {
         std::string filename;
         unsigned int width;
         unsigned int height;
 
-        std::vector<std::vector<bool>> binaryImg;
+        std::vector<std::vector<BmpDot>> img;
 
         unsigned int getWidthInBytes();
         unsigned int getPaddingSize();
@@ -23,7 +26,7 @@ class BmpWriter {
         BmpWriter(std::string &filename, unsigned int width, unsigned int height) :
             filename(filename), width(width), height(height)
         {
-            binaryImg = std::vector<std::vector<bool>>(width, std::vector<bool>(height));
+            img = std::vector<std::vector<BmpDot>>(width, std::vector<BmpDot>(height, std::make_tuple(255, 255, 255)));
         }
 
         void addDots(const std::vector<std::pair<unsigned int, unsigned int>> &dots);
