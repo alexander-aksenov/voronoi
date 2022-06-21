@@ -2,6 +2,7 @@
 #include <vector>
 #include <utility>
 #include <random_points.h>
+#include <bmp_writer.h>
 
 static void
 printPoints(std::vector<std::pair<unsigned int, unsigned int>>& points)
@@ -25,19 +26,25 @@ main(int argc, char** argv)
 
     std::cout << "Num values are " << width << " " << height << " " << num << std::endl;
 
-    std::vector<std::pair<unsigned int, unsigned int>> res;
+    std::vector<std::pair<unsigned int, unsigned int>> points;
 
     if (argc == 5) {
         unsigned int seed = strtoul(argv[4], &end, 10);
         std::cout << "With seed " << seed << std::endl;
 
-        res = RandomPoints::generate(width, height, num, seed);
+        points = RandomPoints::generate(width, height, num, seed);
     } else {
-        res = RandomPoints::generate(width, height, num);
+        points = RandomPoints::generate(width, height, num);
     }
 
-    printPoints(res);
-
+    if (argc == 6) {
+        std::string filename(argv[5]);
+        BmpWriter bw(filename, width, height);
+        bw.addDots(points);
+        bw.writeFile();
+    } else {
+        printPoints(points);
+    }
 
     return 0;
 }
