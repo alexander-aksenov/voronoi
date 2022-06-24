@@ -1,7 +1,6 @@
 #include <cmath>
 #include <voronoi_diag.h>
 
-
 double
 VoronoiDiagram::getDistance(std::pair<unsigned int, unsigned int> p1,
                             std::pair<unsigned int, unsigned int> p2)
@@ -39,7 +38,7 @@ VoronoiDiagram::changeNeighboursIfNeed(std::vector<std::vector<std::pair<unsigne
         if (img[x][from_y].first == 0 && img[x][from_y].second == 0) {
             img[x][from_y] = point;
             has_changes = true;
-        } else {
+        } else if (img[x][from_y].first != point.first || img[x][from_y].second != point.second) {
             if (isNewSeedNearer(img[x][from_y], point, std::make_pair(x, from_y))) {
                 img[x][from_y] = point;
                 has_changes = true;
@@ -52,7 +51,7 @@ VoronoiDiagram::changeNeighboursIfNeed(std::vector<std::vector<std::pair<unsigne
         if (img[x][till_y].first == 0 && img[x][till_y].second == 0) {
             img[x][till_y] = point;
             has_changes = true;
-        } else {
+        } else if (img[x][till_y].first != point.first || img[x][till_y].second != point.second) {
             if (isNewSeedNearer(img[x][till_y], point, std::make_pair(x, till_y))) {
                 img[x][till_y] = point;
                 has_changes = true;
@@ -65,7 +64,7 @@ VoronoiDiagram::changeNeighboursIfNeed(std::vector<std::vector<std::pair<unsigne
         if (img[from_x][y].first == 0 && img[from_x][y].second == 0) {
             img[from_x][y] = point;
             has_changes = true;
-        } else {
+        } else if (img[from_x][y].first != point.first || img[from_x][y].second != point.second) {
             if (isNewSeedNearer(img[from_x][y], point, std::make_pair(from_x, y))) {
                 img[from_x][y] = point;
                 has_changes = true;
@@ -78,7 +77,7 @@ VoronoiDiagram::changeNeighboursIfNeed(std::vector<std::vector<std::pair<unsigne
         if (img[till_x][y].first == 0 && img[till_x][y].second == 0) {
             img[till_x][y] = point;
             has_changes = true;
-        } else {
+        } else if (img[till_x][y].first != point.first || img[till_x][y].second != point.second) {
             if (isNewSeedNearer(img[till_x][y], point, std::make_pair(till_x, y))) {
                 img[till_x][y] = point;
                 has_changes = true;
@@ -94,16 +93,17 @@ VoronoiDiagram::buildDiagram(std::vector<std::vector<std::pair<unsigned int, uns
                              std::vector<std::pair<unsigned int, unsigned int>> &points)
 {
     bool has_changes = false;
+    std::vector<bool> point_changes(points.size(), true);
     unsigned int max = img.size() > img[0].size() ? img.size() : img[0].size();
 
     for (unsigned int i = 0; i < max; i++) {
         has_changes = false;
         for (unsigned int p = 0; p < points.size(); p++) {
-            bool changes = changeNeighboursIfNeed(img, points[p], i);
-            has_changes = has_changes || changes;
+            if (point_changes[p]) {
+                point_changes[p] = changeNeighboursIfNeed(img, points[p], i);
+                has_changes = has_changes || point_changes[p];
+            }
         }
-
-
 
         if (!has_changes)
             break;
