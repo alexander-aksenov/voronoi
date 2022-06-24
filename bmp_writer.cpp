@@ -77,8 +77,6 @@ BmpWriter::writeInfoHeader(std::ofstream &out)
 void
 BmpWriter::writeImage(std::ofstream &out)
 {
-    static const unsigned char empty[] = {255, 255, 255};
-    static const unsigned char full[] = {0, 0, 0};
     static const unsigned char padding[] = {0, 0, 0};
 
     for (unsigned int y = 0; y < height; y++) {
@@ -98,7 +96,17 @@ void
 BmpWriter::addDots(const std::vector<std::pair<unsigned int, unsigned int>> &dots)
 {
     for (auto dot : dots)
-        img[dot.first][dot.second] = std::make_tuple(dot.first, dot.second, 0);
+        img[dot.first][dot.second] = std::make_tuple(255, 255, 255);
+}
+
+void
+BmpWriter::showVoronoi(const std::vector<std::vector<std::pair<unsigned int, unsigned int>>> &diagram)
+{
+    for (unsigned int x = 0; x < diagram.size(); x++) {
+        for (unsigned int y = 0; y < diagram[0].size(); y++) {
+            img[x][y] = std::make_tuple((diagram[x][y].first % 12) * 20, (diagram[x][y].second % 12) * 20, 0);
+        }
+    }
 }
 
 void
