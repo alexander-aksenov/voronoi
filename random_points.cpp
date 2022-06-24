@@ -14,8 +14,8 @@ RandomPoints::generate(unsigned int width, unsigned int height, unsigned int num
     std::vector<std::pair<unsigned int, unsigned int>> res(num);
 
     std::mt19937 gen(seed);
-    std::uniform_int_distribution<unsigned int> w_distrib(0, width);
-    std::uniform_int_distribution<unsigned int> h_distrib(0, height);
+    std::uniform_int_distribution<unsigned int> w_distrib(1, width - 1);
+    std::uniform_int_distribution<unsigned int> h_distrib(1, height - 1);
 
     for (auto it = res.begin(); it != res.end(); it++)
         *it = getPoint(gen, w_distrib, h_distrib);
