@@ -110,6 +110,48 @@ VoronoiDiagram::buildDiagram(std::vector<std::vector<std::pair<unsigned int, uns
     }
 }
 
+bool
+VoronoiDiagram::pointIsEdge(std::vector<std::vector<std::pair<unsigned int, unsigned int>>> &img,
+                            unsigned int x, unsigned int y)
+{
+    unsigned int color1 = img[x][y].first;
+    unsigned int color2 = img[x][y].second;
+
+    /* Top left */
+    if (x > 0 && y > 0 && (img[x-1][y-1].first != color1  || img[x-1][y-1].second != color2))
+        return true;
+
+    /* Top */
+    if (y > 0 && (img[x][y-1].first != color1  || img[x][y-1].second != color2))
+        return true;
+
+    /* Top right */
+    if (x < img.size() - 1 && y > 0 && (img[x+1][y-1].first != color1  || img[x+1][y-1].second != color2))
+        return true;
+
+    /* Left */
+    if (x > 0 && (img[x-1][y].first != color1  || img[x-1][y].second != color2))
+        return true;
+
+    /* Right */
+    if (x < img.size() - 1 && y > 0 && (img[x+1][y].first != color1  || img[x+1][y].second != color2))
+        return true;
+
+    /* Bottom left */
+    if (x > 0 && y < img[0].size() - 1 && (img[x-1][y+1].first != color1  || img[x-1][y+1].second != color2))
+        return true;
+
+    /* Bottom */
+    if (y < img[0].size() - 1 && (img[x][y+1].first != color1  || img[x][y+1].second != color2))
+        return true;
+
+    /* Bottom right */
+    if (x < img.size() - 1 && y < img[0].size() - 1 && (img[x+1][y+1].first != color1  || img[x+1][y+1].second != color2))
+        return true;
+
+    return false;
+}
+
 std::vector<std::vector<std::pair<unsigned int, unsigned int>>>
 VoronoiDiagram::makeVoronoiDiagram(unsigned int width, unsigned int height,
                                    std::vector<std::pair<unsigned int, unsigned int>> &points)
@@ -118,4 +160,19 @@ VoronoiDiagram::makeVoronoiDiagram(unsigned int width, unsigned int height,
     buildDiagram(img, points);
 
     return img;
+}
+
+std::vector<std::vector<bool>>
+VoronoiDiagram::binarizeDiagram(std::vector<std::vector<std::pair<unsigned int, unsigned int>>> &img)
+{
+    std::vector<std::vector<bool>> res(img.size(), std::vector<bool>(img[0].size(), false));
+
+    for (unsigned int x = 0; x < img.size(); x++) {
+        for (unsigned int y = 0; y < img[0].size(); y++) {
+            if (pointIsEdge(img, x, y))
+                res[x][y] = true;
+        }
+    }
+
+    return res;
 }

@@ -55,10 +55,12 @@ main(int argc, char** argv)
     }
 
     auto voronoi = VoronoiDiagram::makeVoronoiDiagram(width, height, points);
+    auto bin_diagram = VoronoiDiagram::binarizeDiagram(voronoi);
     if (argc == 6) {
         std::string filename(argv[5]);
         BmpWriter bw(filename, width, height);
         bw.showVoronoi(voronoi);
+        bw.showBinaryVoronoi(bin_diagram);
         bw.addDots(points);
         bw.writeFile();
     } else {

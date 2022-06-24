@@ -31,6 +31,7 @@ class BmpWriter {
 
         void addDots(const std::vector<std::pair<unsigned int, unsigned int>> &dots);
         void showVoronoi(const std::vector<std::vector<std::pair<unsigned int, unsigned int>>> &diagram);
+        void showBinaryVoronoi(const std::vector<std::vector<bool>> &diagram);
         void writeFile();
 };
 

@@ -96,7 +96,7 @@ void
 BmpWriter::addDots(const std::vector<std::pair<unsigned int, unsigned int>> &dots)
 {
     for (auto dot : dots)
-        img[dot.first][dot.second] = std::make_tuple(255, 255, 255);
+        img[dot.first][dot.second] = std::make_tuple(0, 0, 0);
 }
 
 void
@@ -105,6 +105,17 @@ BmpWriter::showVoronoi(const std::vector<std::vector<std::pair<unsigned int, uns
     for (unsigned int x = 0; x < diagram.size(); x++) {
         for (unsigned int y = 0; y < diagram[0].size(); y++) {
             img[x][y] = std::make_tuple((diagram[x][y].first % 12) * 20, (diagram[x][y].second % 12) * 20, 0);
+        }
+    }
+}
+
+void
+BmpWriter::showBinaryVoronoi(const std::vector<std::vector<bool>> &diagram)
+{
+    for (unsigned int x = 0; x < diagram.size(); x++) {
+        for (unsigned int y = 0; y < diagram[0].size(); y++) {
+            if (diagram[x][y])
+                img[x][y] = std::make_tuple(0, 0, 0);
         }
     }
 }
