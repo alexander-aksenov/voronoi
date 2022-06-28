@@ -1,9 +1,9 @@
 #include <iostream>
 #include <vector>
-#include <utility>
 #include <random_points.h>
 #include <bmp_writer.h>
 #include <voronoi_diag.h>
+#include <point.h>
 
 struct Args {
     unsigned int width;
@@ -20,18 +20,18 @@ struct Args {
 };
 
 static void
-printPoints(std::vector<std::pair<unsigned int, unsigned int>>& points)
+printPoints(std::vector<Point> &points)
 {
     for (auto point : points)
-        std::cout << point.first << ", " << point.second << std::endl;
+        std::cout << point.x << ", " << point.y << std::endl;
 }
 
 static void
-printVoronoi(std::vector<std::vector<std::pair<unsigned int, unsigned int>>>& diag)
+printVoronoi(std::vector<std::vector<Point>> &diag)
 {
     for (unsigned int y = 0; y < diag[0].size(); y++) {
         for (unsigned int x = 0; x < diag.size(); x++) {
-            std::cout << diag[x][y].first << "," << diag[x][y].second << " ";
+            std::cout << diag[x][y].x << "," << diag[x][y].y << " ";
         }
         std::cout << std::endl;
     }
@@ -92,7 +92,7 @@ main(int argc, char** argv)
 
     std::cout << "Field is " << args.width << "x" << args.height << " points " << args.points_cnt << std::endl;
 
-    std::vector<std::pair<unsigned int, unsigned int>> points;
+    std::vector<Point> points;
 
     if (args.with_seed) {
         std::cout << "With seed " << args.seed << std::endl;

@@ -6,6 +6,7 @@
 #include <utility>
 #include <fstream>
 #include <tuple>
+#include <point.h>
 
 using BmpDot = std::tuple<unsigned char, unsigned char, unsigned char>;
 
@@ -29,8 +30,8 @@ class BmpWriter {
             img = std::vector<std::vector<BmpDot>>(width, std::vector<BmpDot>(height, std::make_tuple(255, 255, 255)));
         }
 
-        void addDots(const std::vector<std::pair<unsigned int, unsigned int>> &dots);
-        void showVoronoi(const std::vector<std::vector<std::pair<unsigned int, unsigned int>>> &diagram);
+        void addDots(const std::vector<Point> &dots);
+        void showVoronoi(const std::vector<std::vector<Point>> &diagram);
         void showBinaryVoronoi(const std::vector<std::vector<bool>> &diagram);
         void writeFile();
 };
