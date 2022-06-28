@@ -5,6 +5,20 @@
 #include <bmp_writer.h>
 #include <voronoi_diag.h>
 
+struct Args {
+    unsigned int width;
+    unsigned int height;
+    unsigned int points_cnt;
+
+    bool with_seed;
+    unsigned int seed;
+
+    bool to_file;
+    std::string filepath;
+    bool show_color;
+    bool show_binary;
+};
+
 static void
 printPoints(std::vector<std::pair<unsigned int, unsigned int>>& points)
 {
@@ -23,6 +37,49 @@ printVoronoi(std::vector<std::vector<std::pair<unsigned int, unsigned int>>>& di
     }
 }
 
+static unsigned int
+parseUInt(char* arg)
+{
+    char *end;
+    return strtoul(arg, &end, 10);
+}
+
+static struct Args
+parseArgs(int argc, char** argv)
+{
+    if (argc < 4)
+        throw std::invalid_argument("Number of args less than 4");
+
+    Args ret;
+    char *end;
+
+    ret.width = parseUInt(argv[1]);
+    ret.height = parseUInt(argv[2]);
+    ret.points_cnt = parseUInt(argv[3]);
+
+    if (argc >= 5) {
+        ret.seed = parseUInt(argv[4]);
+        if (ret.seed != 0)
+            ret.with_seed = true;
+    }
+
+    if (argc >= 6) {
+        ret.to_file = true;
+        ret.filepath = std::string(argv[5]);
+        ret.show_color = true;
+        ret.show_binary = true;
+    }
+
+    if (argc == 7) {
+        if (std::string(argv[6]) == "-c")
+            ret.show_binary = false;
+        else if (std::string(argv[6]) == "-b")
+            ret.show_color = false;
+    }
+
+    return ret;
+}
+
 int
 main(int argc, char** argv)
 {
@@ -31,36 +88,28 @@ main(int argc, char** argv)
         return -1;
     }
 
-    char *end;
-    unsigned int width = strtoul(argv[1], &end, 10);
-    unsigned int height = strtoul(argv[2], &end, 10);
-    unsigned int num = strtoul(argv[3], &end, 10);
+    Args args = parseArgs(argc, argv);
 
-    std::cout << "Num values are " << width << " " << height << " " << num << std::endl;
+    std::cout << "Field is " << args.width << "x" << args.height << " points " << args.points_cnt << std::endl;
 
     std::vector<std::pair<unsigned int, unsigned int>> points;
 
-    if (argc >= 5) {
-        unsigned int seed = strtoul(argv[4], &end, 10);
-
-        if (seed != 0) {
-            std::cout << "With seed " << seed << std::endl;
-
-            points = RandomPoints::generate(width, height, num, seed);
-        } else {
-            points = RandomPoints::generate(width, height, num);
-        }
+    if (args.with_seed) {
+        std::cout << "With seed " << args.seed << std::endl;
+        points = RandomPoints::generate(args.width, args.height, args.points_cnt, args.seed);
     } else {
-        points = RandomPoints::generate(width, height, num);
+        points = RandomPoints::generate(args.width, args.height, args.points_cnt);
     }
 
-    auto voronoi = VoronoiDiagram::makeVoronoiDiagram(width, height, points);
+    auto voronoi = VoronoiDiagram::makeVoronoiDiagram(args.width, args.height, points);
     auto bin_diagram = VoronoiDiagram::binarizeDiagram(voronoi);
-    if (argc == 6) {
+    if (args.to_file) {
         std::string filename(argv[5]);
-        BmpWriter bw(filename, width, height);
-        bw.showVoronoi(voronoi);
-        bw.showBinaryVoronoi(bin_diagram);
+        BmpWriter bw(args.filepath, args.width, args.height);
+        if (args.show_color)
+            bw.showVoronoi(voronoi);
+        if (args.show_binary)
+            bw.showBinaryVoronoi(bin_diagram);
         bw.addDots(points);
         bw.writeFile();
     } else {
