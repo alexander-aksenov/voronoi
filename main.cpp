@@ -48,7 +48,8 @@ static struct Args
 parseArgs(int argc, char** argv)
 {
     if (argc < 4)
-        throw std::invalid_argument("Number of args less than 4");
+        throw std::invalid_argument("Number of args less than 3: width, height, " \
+                                    "points count[, seed, output file, -c(olor)/-b(inary) output]");
 
     Args ret;
     char *end;
@@ -83,12 +84,14 @@ parseArgs(int argc, char** argv)
 int
 main(int argc, char** argv)
 {
-    if (argc < 4) {
-        std::cerr << "Number of args less than 4" << std::endl;
+    Args args;
+
+    try {
+        args = parseArgs(argc, argv);
+    } catch (const std::exception &ex) {
+        std::cerr << ex.what() << std::endl;
         return -1;
     }
-
-    Args args = parseArgs(argc, argv);
 
     std::cout << "Field is " << args.width << "x" << args.height << " points " << args.points_cnt << std::endl;
 
