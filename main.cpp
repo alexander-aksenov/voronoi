@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <random_points.h>
+#include <image_generator.h>
 #include <bmp_writer.h>
 #include <voronoi_diag.h>
 #include <point.h>
@@ -108,12 +109,13 @@ main(int argc, char** argv)
     auto bin_diagram = VoronoiDiagram::binarizeDiagram(voronoi);
     if (args.to_file) {
         std::string filename(argv[5]);
-        BmpWriter bw(args.filepath, args.width, args.height);
+        ImageGenerator ig(args.width, args.height);
         if (args.show_color)
-            bw.showVoronoi(voronoi);
+            ig.addVoronoi(voronoi);
         if (args.show_binary)
-            bw.showBinaryVoronoi(bin_diagram);
-        bw.addDots(points);
+            ig.addBinaryVoronoi(bin_diagram);
+        ig.addDots(points);
+        BmpWriter bw(args.filepath, ig);
         bw.writeFile();
     } else {
         printPoints(points);

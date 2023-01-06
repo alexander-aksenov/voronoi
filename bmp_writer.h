@@ -2,20 +2,14 @@
 #define BMP_WRITER_H
 
 #include <string>
-#include <vector>
-#include <utility>
 #include <fstream>
-#include <tuple>
-#include <point.h>
+#include <image_generator.h>
 
-using BmpDot = std::tuple<unsigned char, unsigned char, unsigned char>;
 
 class BmpWriter {
-        std::string filename;
-        unsigned int width;
-        unsigned int height;
+        const std::string filename;
 
-        std::vector<std::vector<BmpDot>> img;
+        const ImageGenerator &img;
 
         unsigned int getWidthInBytes();
         unsigned int getPaddingSize();
@@ -24,15 +18,9 @@ class BmpWriter {
         void writeImage(std::ofstream &out);
 
     public:
-        BmpWriter(std::string &filename, unsigned int width, unsigned int height) :
-            filename(filename), width(width), height(height)
-        {
-            img = std::vector<std::vector<BmpDot>>(width, std::vector<BmpDot>(height, std::make_tuple(255, 255, 255)));
-        }
+        BmpWriter(const std::string &filename, const ImageGenerator &img) :
+            filename(filename), img(img) {}
 
-        void addDots(const std::vector<Point> &dots);
-        void showVoronoi(const std::vector<std::vector<Point>> &diagram);
-        void showBinaryVoronoi(const std::vector<std::vector<bool>> &diagram);
         void writeFile();
 };
 

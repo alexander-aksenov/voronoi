@@ -10,7 +10,7 @@ enum {
 unsigned int
 BmpWriter::getWidthInBytes()
 {
-    return width * BYTES_PER_PIXEL;
+    return img.getWidth() * BYTES_PER_PIXEL;
 }
 
 unsigned int
@@ -23,7 +23,7 @@ void
 BmpWriter::writeFileHeader(std::ofstream &out)
 {
     unsigned int stride = getWidthInBytes() + getPaddingSize();
-    unsigned int fileSize = FILE_HEADER_SIZE + INFO_HEADER_SIZE + (stride * height);
+    unsigned int fileSize = FILE_HEADER_SIZE + INFO_HEADER_SIZE + (stride * img.getHeight());
     unsigned char fileHeader[] = {
         0,0,     /// signature
         0,0,0,0, /// image file size in bytes
@@ -60,14 +60,14 @@ BmpWriter::writeInfoHeader(std::ofstream &out)
     };
 
     infoHeader[ 0] = (unsigned char)(INFO_HEADER_SIZE);
-    infoHeader[ 4] = (unsigned char)(width      );
-    infoHeader[ 5] = (unsigned char)(width >>  8);
-    infoHeader[ 6] = (unsigned char)(width >> 16);
-    infoHeader[ 7] = (unsigned char)(width >> 24);
-    infoHeader[ 8] = (unsigned char)(height      );
-    infoHeader[ 9] = (unsigned char)(height >>  8);
-    infoHeader[10] = (unsigned char)(height >> 16);
-    infoHeader[11] = (unsigned char)(height >> 24);
+    infoHeader[ 4] = (unsigned char)(img.getWidth()      );
+    infoHeader[ 5] = (unsigned char)(img.getWidth() >>  8);
+    infoHeader[ 6] = (unsigned char)(img.getWidth() >> 16);
+    infoHeader[ 7] = (unsigned char)(img.getWidth() >> 24);
+    infoHeader[ 8] = (unsigned char)(img.getHeight()      );
+    infoHeader[ 9] = (unsigned char)(img.getHeight() >>  8);
+    infoHeader[10] = (unsigned char)(img.getHeight() >> 16);
+    infoHeader[11] = (unsigned char)(img.getHeight() >> 24);
     infoHeader[12] = (unsigned char)(1);
     infoHeader[14] = (unsigned char)(BYTES_PER_PIXEL*8);
 
@@ -79,44 +79,16 @@ BmpWriter::writeImage(std::ofstream &out)
 {
     static const unsigned char padding[] = {0, 0, 0};
 
-    for (unsigned int y = 0; y < height; y++) {
-        for (unsigned int x = 0; x < width; x++) {
+    for (unsigned int y = 0; y < img.getHeight(); y++) {
+        for (unsigned int x = 0; x < img.getWidth(); x++) {
             const unsigned char dot[] = {
-                std::get<0>(img[x][y]),
-                std::get<1>(img[x][y]),
-                std::get<2>(img[x][y]),
+                img.getR(x, y),
+                img.getG(x, y),
+                img.getB(x, y),
             };
             out.write((const char *) &dot, BYTES_PER_PIXEL);
         }
         out.write((const char *) &padding, getPaddingSize());
-    }
-}
-
-void
-BmpWriter::addDots(const std::vector<Point> &dots)
-{
-    for (auto dot : dots)
-        img[dot.x][dot.y] = std::make_tuple(0, 0, 0);
-}
-
-void
-BmpWriter::showVoronoi(const std::vector<std::vector<Point>> &diagram)
-{
-    for (unsigned int x = 0; x < diagram.size(); x++) {
-        for (unsigned int y = 0; y < diagram[0].size(); y++) {
-            img[x][y] = std::make_tuple((diagram[x][y].x % 12) * 20, (diagram[x][y].y % 12) * 20, 0);
-        }
-    }
-}
-
-void
-BmpWriter::showBinaryVoronoi(const std::vector<std::vector<bool>> &diagram)
-{
-    for (unsigned int x = 0; x < diagram.size(); x++) {
-        for (unsigned int y = 0; y < diagram[0].size(); y++) {
-            if (diagram[x][y])
-                img[x][y] = std::make_tuple(0, 0, 0);
-        }
     }
 }
 
