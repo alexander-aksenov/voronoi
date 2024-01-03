@@ -28,5 +28,5 @@ RandomPoints::generate(unsigned int width, unsigned int height, unsigned int num
 {
     std::random_device rd;
 
-    return generate(height, width, num, rd());
+    return generate(width, height, num, rd());
 }
