@@ -4,6 +4,7 @@
 #include <image_generator.h>
 #include <bmp_writer.h>
 #include <voronoi_diag.h>
+#include <height_map.h>
 #include <point.h>
 
 struct Args {
@@ -52,10 +53,13 @@ parseArgs(int argc, char** argv)
 {
     if (argc < 4)
         throw std::invalid_argument("Number of args less than 3: width, height, " \
-                                    "points count[, seed, output file, -d(iagram)/-h(eight map), -c(olor)/-b(inary) output]");
+                                    "points count[, seed, -d(iagram)/-h(eight map), output file, -c(olor)/-b(inary) output]");
 
     Args ret;
     char *end;
+
+    ret.with_seed = false;
+    ret.make_height_map = false;
 
     ret.width = parseUInt(argv[1]);
     ret.height = parseUInt(argv[2]);
@@ -68,16 +72,16 @@ parseArgs(int argc, char** argv)
     }
 
     if (argc >= 6) {
+        if (std::string(argv[6]) == "-h")
+            ret.make_height_map = true;
+    }
+
+
+    if (argc >= 7) {
         ret.to_file = true;
         ret.filepath = std::string(argv[5]);
         ret.show_color = true;
         ret.show_binary = true;
-        ret.make_height_map = false;
-    }
-
-    if (argc >= 7) {
-        if (std::string(argv[6]) == "-h")
-            ret.make_height_map = true;
     }
 
     if (argc == 8) {
@@ -117,6 +121,12 @@ main(int argc, char** argv)
     if (args.to_file) {
         std::string filename(argv[5]);
         ImageGenerator ig(args.width, args.height);
+        if (args.make_height_map) {
+            if (args.with_seed)
+                HeightMap::makeHeightMap(voronoi, points, args.seed);
+            else
+                HeightMap::makeHeightMap(voronoi, points);
+        }
         if (args.show_color)
             ig.addVoronoi(voronoi);
         if (args.show_binary) {
