@@ -21,6 +21,7 @@ class ImageGenerator {
         void addDots(const std::vector<Point> &dots);
         void addVoronoi(const std::vector<std::vector<Point>> &diagram);
         void addBinaryVoronoi(const std::vector<std::vector<bool>> &diagram);
+        void addHeightMap(const std::vector<std::vector<Point>> &map);
         unsigned int getWidth() const { return width; }
         unsigned int getHeight() const { return height; }
         unsigned char getR(unsigned int x, unsigned int y) const { return std::get<0>(img[x][y]); }

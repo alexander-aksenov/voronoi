@@ -72,14 +72,14 @@ parseArgs(int argc, char** argv)
     }
 
     if (argc >= 6) {
-        if (std::string(argv[6]) == "-h")
+        if (std::string(argv[5]) == "-h")
             ret.make_height_map = true;
     }
 
 
     if (argc >= 7) {
         ret.to_file = true;
-        ret.filepath = std::string(argv[5]);
+        ret.filepath = std::string(argv[6]);
         ret.show_color = true;
         ret.show_binary = true;
     }
@@ -118,17 +118,20 @@ main(int argc, char** argv)
     }
 
     auto voronoi = VoronoiDiagram::makeVoronoiDiagram(args.width, args.height, points);
+    if (args.make_height_map) {
+        if (args.with_seed)
+            HeightMap::makeHeightMap(voronoi, points, args.seed);
+        else
+            HeightMap::makeHeightMap(voronoi, points);
+    }
+
     if (args.to_file) {
         std::string filename(argv[5]);
         ImageGenerator ig(args.width, args.height);
-        if (args.make_height_map) {
-            if (args.with_seed)
-                HeightMap::makeHeightMap(voronoi, points, args.seed);
-            else
-                HeightMap::makeHeightMap(voronoi, points);
-        }
-        if (args.show_color)
+        if (args.show_color && !args.make_height_map)
             ig.addVoronoi(voronoi);
+        else if (args.make_height_map)
+            ig.addHeightMap(voronoi);
         if (args.show_binary) {
             auto bin_diagram = VoronoiDiagram::binarizeDiagram(voronoi);
             ig.addBinaryVoronoi(bin_diagram);

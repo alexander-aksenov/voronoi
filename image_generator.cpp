@@ -21,6 +21,19 @@ ImageGenerator::addVoronoi(const std::vector<std::vector<Point>> &diagram)
 }
 
 void
+ImageGenerator::addHeightMap(const std::vector<std::vector<Point>> &map)
+{
+    for (unsigned int x = 0; x < map.size(); x++) {
+        for (unsigned int y = 0; y < map[0].size(); y++) {
+            img[x][y] = std::make_tuple(
+                                        (map[x][y].x / 10) % 255,
+                                        (map[x][y].x / 10) % 255,
+                                        (map[x][y].x / 10) % 255);
+        }
+    }
+}
+
+void
 ImageGenerator::addBinaryVoronoi(const std::vector<std::vector<bool>> &diagram)
 {
     for (unsigned int x = 0; x < diagram.size(); x++) {
