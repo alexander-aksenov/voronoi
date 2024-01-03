@@ -12,7 +12,10 @@ ImageGenerator::addVoronoi(const std::vector<std::vector<Point>> &diagram)
 {
     for (unsigned int x = 0; x < diagram.size(); x++) {
         for (unsigned int y = 0; y < diagram[0].size(); y++) {
-            img[x][y] = std::make_tuple((diagram[x][y].x % 12) * 20, (diagram[x][y].y % 12) * 20, 0);
+            img[x][y] = std::make_tuple(
+                                        (diagram[x][y].x % 12) * 20,
+                                        (diagram[x][y].y % 12) * 20,
+                                        (diagram[x][y].x % 6 + diagram[x][y].y % 6) * 20);
         }
     }
 }
