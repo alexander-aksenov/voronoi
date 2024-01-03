@@ -18,6 +18,8 @@ struct Args {
     std::string filepath;
     bool show_color;
     bool show_binary;
+
+    bool make_height_map;
 };
 
 static void
@@ -50,7 +52,7 @@ parseArgs(int argc, char** argv)
 {
     if (argc < 4)
         throw std::invalid_argument("Number of args less than 3: width, height, " \
-                                    "points count[, seed, output file, -c(olor)/-b(inary) output]");
+                                    "points count[, seed, output file, -d(iagram)/-h(eight map), -c(olor)/-b(inary) output]");
 
     Args ret;
     char *end;
@@ -70,12 +72,18 @@ parseArgs(int argc, char** argv)
         ret.filepath = std::string(argv[5]);
         ret.show_color = true;
         ret.show_binary = true;
+        ret.make_height_map = false;
     }
 
-    if (argc == 7) {
-        if (std::string(argv[6]) == "-c")
+    if (argc >= 7) {
+        if (std::string(argv[6]) == "-h")
+            ret.make_height_map = true;
+    }
+
+    if (argc == 8) {
+        if (std::string(argv[7]) == "-c")
             ret.show_binary = false;
-        else if (std::string(argv[6]) == "-b")
+        else if (std::string(argv[7]) == "-b")
             ret.show_color = false;
     }
 
@@ -106,14 +114,15 @@ main(int argc, char** argv)
     }
 
     auto voronoi = VoronoiDiagram::makeVoronoiDiagram(args.width, args.height, points);
-    auto bin_diagram = VoronoiDiagram::binarizeDiagram(voronoi);
     if (args.to_file) {
         std::string filename(argv[5]);
         ImageGenerator ig(args.width, args.height);
         if (args.show_color)
             ig.addVoronoi(voronoi);
-        if (args.show_binary)
+        if (args.show_binary) {
+            auto bin_diagram = VoronoiDiagram::binarizeDiagram(voronoi);
             ig.addBinaryVoronoi(bin_diagram);
+        }
         ig.addDots(points);
         BmpWriter bw(args.filepath, ig);
         bw.writeFile();
