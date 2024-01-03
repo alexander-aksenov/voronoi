@@ -3,7 +3,6 @@
 
 #include <vector>
 #include <tuple>
-#include <vector>
 #include <utility>
 #include <point.h>
 
