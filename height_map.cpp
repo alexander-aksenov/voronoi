@@ -3,6 +3,7 @@
 #include <unordered_map>
 #include <height_map.h>
 
+
 enum {
     MAIN_POINTS_PERCENT = 10,
 
@@ -14,10 +15,11 @@ void
 HeightMap::generateMainPointsHeights(std::vector<MainPoint>& points, unsigned int seed)
 {
     std::mt19937 gen(seed);
-    std::uniform_int_distribution<unsigned int> distrib(MIN_HEIGHT, MAX_HEIGHT);
+    std::uniform_int_distribution<int> distrib(MIN_HEIGHT, MAX_HEIGHT);
 
-    for (auto it = points.begin(); it != points.end(); it++)
+    for (auto it = points.begin(); it != points.end(); it++) {
         (*it).height = distrib(gen);
+    }
 }
 
 double
@@ -62,7 +64,7 @@ HeightMap::evalHeigthPointsHeights(std::vector<MainPoint>& main_points,
             }
 
             /* If not new - add */
-            if (!is_new) {
+            if (!is_new && replace_ind < HEIGHTS_COUNT) {
                 (*h_it).heights[replace_ind].mp = *m_it;
                 (*h_it).heights[replace_ind].distance = distance;
             }
@@ -85,62 +87,71 @@ HeightMap::evalPointHeigth(const HeightPoint& hp)
 }
 
 std::unordered_map<Point, int>
-HeightMap::getHeigthsHashTable(const std::vector<MainPoint>& main_points,
+HeightMap::getHeightsHashTable(const std::vector<MainPoint>& main_points,
                                const std::vector<HeightPoint>& height_points)
 {
     std::unordered_map<Point, int> hash_table;
 
-    for (auto it = main_points.begin(); it != main_points.end(); it++)
+    for (auto it = main_points.begin(); it != main_points.end(); it++) {
         hash_table.emplace((*it).p, (*it).height);
+    }
 
-    for (auto it = height_points.begin(); it != height_points.end(); it++) {
-        unsigned int height = evalPointHeigth(*it);
-        hash_table.emplace((*it).p, height);
+    for (auto hit = height_points.begin(); hit != height_points.end(); hit++) {
+        unsigned int height = evalPointHeigth(*hit);
+        hash_table.emplace((*hit).p, height);
     }
 
     return hash_table;
 }
 
-std::vector<std::vector<int>>
-HeightMap::doMakeHeigthMap(const std::vector<std::vector<Point>>& voronoi,
-                           const std::unordered_map<Point, int> heights_by_point)
+void
+HeightMap::doMakeHeigthMap(std::vector<std::vector<Point>>& voronoi,
+                           const std::unordered_map<Point, int> heights_by_point,
+                           int min)
 {
-    std::vector<std::vector<int>> height_map(voronoi.size(), std::vector<int>(voronoi[0].size(), 0));
+    /* TODO rework this using normal class */
+    int diff = min * (-1);
 
     for (unsigned int x = 0; x < voronoi.size(); x++) {
         for (unsigned int y = 0; y < voronoi[0].size(); y++) {
-            height_map[x][y] = heights_by_point.at(voronoi[x][y]);
+            auto height = heights_by_point.at(voronoi[x][y]);
+            voronoi[x][y].x = voronoi[x][y].y = height + diff;
         }
     }
-
-    return height_map;
 }
 
 
-std::vector<std::vector<int>>
-HeightMap::makeHeightMap(const std::vector<std::vector<Point>>& voronoi,
+void
+HeightMap::makeHeightMap(std::vector<std::vector<Point>>& voronoi,
                          const std::vector<Point>& points,
                          unsigned int seed)
 {
-    size_t main_points_cnt = points.size() * (MAIN_POINTS_PERCENT / 100);
+    size_t main_points_cnt = points.size() * (static_cast<float>(MAIN_POINTS_PERCENT) / 100);
     if (main_points_cnt == 0)
         main_points_cnt = 1;
 
     std::vector<MainPoint> main_points(points.begin(), points.begin() + main_points_cnt);
-    std::vector<HeightPoint> height_points(points.begin() + main_points_cnt + 1, points.end());
+    std::vector<HeightPoint> height_points(points.begin() + main_points_cnt, points.end());
 
     generateMainPointsHeights(main_points, seed);
     evalHeigthPointsHeights(main_points, height_points);
-    auto heights_by_point = getHeigthsHashTable(main_points, height_points);
+    auto heights_by_point = getHeightsHashTable(main_points, height_points);
 
-    return doMakeHeigthMap(voronoi, heights_by_point);
+    int min = MAX_HEIGHT;
+
+    for (auto& it : heights_by_point) {
+        if (it.second < min)
+            min = it.second;
+    }
+
+    doMakeHeigthMap(voronoi, heights_by_point, min);
 }
 
-std::vector<std::vector<int>>
-HeightMap::makeHeightMap(const std::vector<std::vector<Point>>& voronoi,
+void
+HeightMap::makeHeightMap(std::vector<std::vector<Point>>& voronoi,
                          const std::vector<Point>& points)
 {
     std::random_device rd;
 
-    return makeHeightMap(voronoi, points, rd());
+    makeHeightMap(voronoi, points, rd());
 }

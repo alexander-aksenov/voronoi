@@ -49,20 +49,20 @@ class HeightMap {
         static void generateMainPointsHeights(std::vector<MainPoint>& main_points, unsigned int seed);
         static void evalHeigthPointsHeights(std::vector<MainPoint>& main_points,
                                             std::vector<HeightPoint>& height_points);
-        static std::unordered_map<Point, int> getHeigthsHashTable(const std::vector<MainPoint>& main_points,
+        static std::unordered_map<Point, int> getHeightsHashTable(const std::vector<MainPoint>& main_points,
                                                                   const std::vector<HeightPoint>& height_points);
-        static std::vector<std::vector<int>> doMakeHeigthMap(const std::vector<std::vector<Point>>& voronoi,
-                                                             const std::unordered_map<Point, int> heights_by_point);
+        static void doMakeHeigthMap(std::vector<std::vector<Point>>& voronoi,
+                                    const std::unordered_map<Point, int> heights_by_point,
+                                    int min);
         static double getPointsDistance(const Point& p1, const Point& p2);
         static int evalPointHeigth(const HeightPoint& hp);
 
 
     public:
-        static std::vector<std::vector<int>> makeHeightMap(const std::vector<std::vector<Point>>& voronoi,
-                                                           const std::vector<Point>& points,
-                                                           unsigned int seed);
-        static std::vector<std::vector<int>> makeHeightMap(const std::vector<std::vector<Point>>& voronoi,
-                                                           const std::vector<Point> &points);
+        static void makeHeightMap(std::vector<std::vector<Point>>& voronoi,
+                                  const std::vector<Point>& points,
+                                  unsigned int seed);
+        static void makeHeightMap(std::vector<std::vector<Point>>& voronoi, const std::vector<Point> &points);
 };
 
 #endif /* HEIGHT_MAP_H */
